@@ -112,7 +112,7 @@ npx playwright show-report
 
 Generic API Wrapper located in:
 
-```text
+```
 utils/ApiClient.ts
 ```
 
@@ -140,7 +140,7 @@ Each business domain should have its own API class.
 
 Example:
 
-```text
+```
 api/
 ├── UserApi.ts
 ├── PaymentApi.ts
@@ -165,10 +165,6 @@ Example:
 ```typescript
 export const userEndpoints = {
   getUsers: "/api/users",
-
-  getSingleUser: (id: string) =>
-    `/api/users/${id}`,
-
   registerUser: "/api/register"
 };
 ```
