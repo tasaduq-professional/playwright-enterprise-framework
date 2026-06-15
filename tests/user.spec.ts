@@ -11,14 +11,14 @@ test.beforeEach(async ({ request }) => {
 
 test('Get List of Users ', async ({ request }) => {
    const response = await userApi.getListOfUsers(baseURL);
-   console.log(await response.json());
+   //console.log(await response.json());
 });
 
 test("Get Single user and verify", async ({request}) =>{
     const id = '2';
     const res = await userApi.getSingleUser(baseURL, id);
     const response = await res.json();
-    console.log(response)
+    //console.log(response)
     expect(response.data.id).toEqual((Number(id)))
 });
 
@@ -34,7 +34,7 @@ test("Verify Post Call with dynamic payload that comes from other file", async (
       ...userApiData.registration,
       password: "567876545678"
     }
-    console.log(payload)
+    //console.log(payload)
     const response = await userApi.registerUser(baseURL, payload)
     expect(response.ok()).toBeTruthy()
 });

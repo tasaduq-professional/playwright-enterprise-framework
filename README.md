@@ -255,3 +255,39 @@ test("Get Single User", async () => {
 Tasaduq Hussain
 
 Lead SDET | Playwright | TypeScript | API Automation
+
+---
+
+## MCP (Model Context Protocol) Integration
+
+This project includes an MCP server that exposes tools for running Playwright tests and opening the Playwright HTML report.
+
+- **Server file:** mcp/server.ts
+- **Tools exposed:**
+  - `run_playwright_tests` — Runs all Playwright tests via the framework (`runPlaywrightTests()`).
+  - `show_playwright_report` — Opens the generated Playwright HTML report (`showPlaywrightReport()`).
+
+Run the server locally:
+
+```bash
+npx tsx mcp/server.ts
+```
+
+Start via VS Code MCP config:
+
+- See `.vscode/mcp.json` — the `playwright-framework` server runs `npx tsx ${workspaceFolder}/mcp/server.ts`.
+
+How the server communicates:
+
+- Uses stdio transport (`StdioServerTransport`) to communicate over stdin/stdout with an MCP-compatible host (IDE/agent).
+- Advertises tools via `ListToolsRequestSchema` and handles executions via `CallToolRequestSchema`.
+
+Typical usage:
+
+- An external MCP client lists tools, then calls `run_playwright_tests` to execute tests and receives a text response with the result.
+- The server logs lifecycle events to stderr (for example: "MCP Server Started").
+
+Notes:
+
+- Ensure `tsx` is available (install with `npm install -D tsx`) or run via `npx tsx`.
+- The Playwright runner implementation lives in `mcp/playwrightRunner.ts`.

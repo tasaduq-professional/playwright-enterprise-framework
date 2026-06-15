@@ -1,0 +1,11 @@
+{
+  "servers": {
+    "playwright-framework": {
+      "command": "npx",
+      "args": [
+        "tsx",
+        "${workspaceFolder}/mcp/server.ts"
+      ]
+    }
+  }
+}
