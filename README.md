@@ -1,293 +1,167 @@
 # Playwright API Automation Framework
 
-A scalable API Automation Framework built using Playwright and TypeScript.
+A scalable API Automation Framework built with Playwright and TypeScript.
 
-## Features
+## Highlights
 
-- Generic API Client Wrapper
-- Reusable API Modules
-- Externalized Test Data
-- Endpoint Management
-- Dynamic Payload Support
-- Environment Ready Structure
-- Playwright Test Runner
-- Easy Framework Scalability
+- Generic API client wrapper
+- Reusable domain API modules
+- Externalized test data
+- Centralized endpoint management
+- Playwright test runner + HTML report
+- MCP helpers for automation and tooling
 
 ---
 
-## Project Structure
+## Project Structure (current)
 
 ```text
-src
-│
-├── api
-│   ├── userApi_client.ts
-│
-├── endpoints
-│   ├── userEndpoints.ts
-│
-├── testData
-│   ├── userApiData.ts
-│
-├── utils
-│   ├── ApiClient.ts
-│
-├── tests
-│   ├── user.spec.ts
+package.json
+playwright.config.ts
+api/
+  userApi_Client.ts
+endpoints/
+  userApiEndpoints.ts
+mcp/
+  playwrightRunner.ts
+  ragService.ts
+  server.ts
+playwright-report/
+  index.html
+testData/
+  paymentApiData.ts
+  userApiData.ts
+tests/
+  user.spec.ts
+utils/
+  ApiClient.ts
 ```
 
 ---
 
-## Framework Design
+## Quickstart
 
-```text
-Test Cases
-      │
-      ▼
-API Layer (UserApi)
-      │
-      ▼
-ApiClient Wrapper
-      │
-      ▼
-Playwright APIRequestContext
-      │
-      ▼
-REST APIs
-```
-
----
-
-## Installation
-
-Clone repository
+Clone the repository and install dependencies:
 
 ```bash
 git clone <repository-url>
-```
-
-Install dependencies
-
-```bash
+cd FreshFamework
 npm install
-```
-
-Install Playwright
-
-```bash
 npx playwright install
 ```
 
----
-
-## Running Tests
-
-Execute all tests
+Run all tests:
 
 ```bash
 npx playwright test
 ```
 
-Execute a specific test file
+Run a single test file:
 
 ```bash
 npx playwright test tests/user.spec.ts
 ```
 
-Run in headed mode
+Run tests in headed mode:
 
 ```bash
 npx playwright test --headed
 ```
 
-Generate report
+Open the Playwright HTML report:
 
 ```bash
+open playwright-report/index.html
+# or
 npx playwright show-report
 ```
 
 ---
 
-## API Client
+## Key Files
 
-Generic API Wrapper located in:
-
-```
-utils/ApiClient.ts
-```
-
-Supported methods:
-
-- GET
-- POST
-- PUT
-- PATCH
-- DELETE
-
-Example:
-
-```typescript
-await apiClient.getMethod(endpoint, headers);
-
-await apiClient.postMethod(endpoint, headers, payload);
-```
+- API client: utils/ApiClient.ts
+- Domain API: api/userApi_Client.ts
+- Endpoints: endpoints/userApiEndpoints.ts
+- Tests: tests/user.spec.ts
+- Test data: testData/userApiData.ts, testData/paymentApiData.ts
+- MCP server & runner: mcp/server.ts, mcp/playwrightRunner.ts
 
 ---
 
-## API Modules
+## API Usage Examples
 
-Each business domain should have its own API class.
-
-Example:
-
-```
-api/
-├── UserApi.ts
-├── PaymentApi.ts
-├── BillingApi.ts
-├── OrderApi.ts
-```
-
-Example Usage:
-
-```typescript
-const response = await userApi.getSingleUser(id);
-```
-
----
-
-## Endpoint Management
-
-Endpoints are stored separately.
+Generic `ApiClient` supports standard REST methods (GET, POST, PUT, PATCH, DELETE).
 
 Example:
 
 ```typescript
-export const userEndpoints = {
-  getUsers: "/api/users",
-  registerUser: "/api/register"
+const res = await apiClient.getMethod(userEndpoint, headers);
+const create = await apiClient.postMethod(registerEndpoint, headers, payload);
+```
+
+Endpoints example:
+
+```typescript
+export const userApiEndpoints = {
+  getUsers: '/api/users',
+  registerUser: '/api/register'
 };
 ```
 
-Benefits:
-
-- Centralized management
-- Easy maintenance
-- Reduced duplication
-
 ---
 
-## Test Data Management
+## MCP Integration
 
-Static payloads are stored separately.
+This repo exposes an MCP-compatible server to run tests and open the report programmatically.
 
-Example:
+- Server: mcp/server.ts
+- Runner: mcp/playwrightRunner.ts
 
-```typescript
-export const userApiData = {
-  registration: {
-    email: "eve.holt@reqres.in",
-    password: "123456"
-  }
-};
-```
-
-Usage:
-
-```typescript
-const payload =
-  userApiData.registration;
-```
-
----
-
-## Dynamic Payload Example
-
-```typescript
-const payload = {
-  ...userApiData.registration,
-  password: "567876545678"
-};
-```
-
-Useful for:
-
-- Negative testing
-- Boundary testing
-- Data-driven testing
-
----
-
-## Sample Test
-
-```typescript
-test("Get Single User", async () => {
-
-    const id = "2";
-
-    const response =
-        await userApi.getSingleUser(id);
-
-    expect(
-        (await response.json()).data.id
-    ).toEqual(Number(id));
-});
-```
-
----
-
-## Future Enhancements
-
-- Environment Configuration
-- Playwright Fixtures
-- API Schema Validation
-- Request/Response Logging
-- Reporting Integration
-- CI/CD Pipeline Integration
-- Docker Support
-- Allure Reporting
-- Faker Data Generation
-
----
-
-## Author
-
-Tasaduq Hussain
-
-Lead SDET | Playwright | TypeScript | API Automation
-
----
-
-## MCP (Model Context Protocol) Integration
-
-This project includes an MCP server that exposes tools for running Playwright tests and opening the Playwright HTML report.
-
-- **Server file:** mcp/server.ts
-- **Tools exposed:**
-  - `run_playwright_tests` — Runs all Playwright tests via the framework (`runPlaywrightTests()`).
-  - `show_playwright_report` — Opens the generated Playwright HTML report (`showPlaywrightReport()`).
-
-Run the server locally:
+Start the MCP server locally:
 
 ```bash
 npx tsx mcp/server.ts
 ```
 
-Start via VS Code MCP config:
+Notes:
 
-- See `.vscode/mcp.json` — the `playwright-framework` server runs `npx tsx ${workspaceFolder}/mcp/server.ts`.
+- Ensure `tsx` is installed (dev dependency) or use `npx tsx`.
 
-How the server communicates:
+- The MCP tools include `run_playwright_tests` and `show_playwright_report`.
 
-- Uses stdio transport (`StdioServerTransport`) to communicate over stdin/stdout with an MCP-compatible host (IDE/agent).
-- Advertises tools via `ListToolsRequestSchema` and handles executions via `CallToolRequestSchema`.
+---
 
-Typical usage:
+## RAG (Retrieval-Augmented Generation)
 
-- An external MCP client lists tools, then calls `run_playwright_tests` to execute tests and receives a text response with the result.
-- The server logs lifecycle events to stderr (for example: "MCP Server Started").
+This project includes a RAG helper implementation used to enrich test diagnostics, assist with environment-specific Q&A, and augment reports with retrieved context.
+
+- Implementation: `mcp/ragService.ts`
+- Purpose: retrieve relevant artifacts or documents and generate contextualized text using a configured LLM provider.
+- Basic usage: set any required provider keys as environment variables (for example `OPENAI_API_KEY`) and update vector-store or index paths inside `mcp/ragService.ts` as needed. Start the MCP server and invoke the RAG utilities via the MCP client or import `mcp/ragService.ts` from scripts.
 
 Notes:
 
-- Ensure `tsx` is available (install with `npm install -D tsx`) or run via `npx tsx`.
-- The Playwright runner implementation lives in `mcp/playwrightRunner.ts`.
+- RAG depends on an LLM provider and an index/vector store; ensure credentials and storage paths are configured before using.
+- See `mcp/ragService.ts` for implementation details and provider-specific setup instructions.
+
+---
+
+## Contributing
+
+1. Open an issue or feature request.
+2. Create a branch for your change.
+3. Add tests and update `testData` as needed.
+4. Submit a pull request.
+
+---
+
+## Changelog
+
+- 2026-06-17: README updated to reflect current file names and structure.
+
+---
+
+## Author
+
+Tasaduq Hussain — Lead SDET | Playwright | TypeScript
