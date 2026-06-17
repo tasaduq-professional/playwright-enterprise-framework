@@ -1,5 +1,6 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { getRequirementDetails } from "./ragService";
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
@@ -9,7 +10,7 @@ import {
   runPlaywrightTests,
   showPlaywrightReport,
   runSpecificTestSpec,
-} from "./playwrightRunner.ts";
+} from "./playwrightRunner";
 
 const server = new Server(
   {
@@ -55,6 +56,20 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         required: ["testFile"],
       },
     },
+    {
+      name: "get_requirement_details",
+      description: "MUST use this tool to retrieve requirement details from markdown requirement files.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          epicName: {
+            type: "string",
+            description: "Epic file name without .md",
+          },
+        },
+        required: ["epicName"],
+      },
+    },
   ],
 }));
 
@@ -83,6 +98,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
     const result = await showPlaywrightReport();
 
+    return {
+      content: [
+        {
+          type: "text",
+          text: result,
+        },
+      ],
+    };
+  }
+
+  if (toolName === "get_requirement_details") {
+    console.error("MCP TOOL EXECUTED: get_requirement_details");
+    const epicName = request.params.arguments?.epicName as string;
+    const result = await getRequirementDetails(epicName);
     return {
       content: [
         {
